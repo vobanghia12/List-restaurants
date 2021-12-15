@@ -31,10 +31,25 @@ router.get("/confirm", function (req, res) {
   });
   
 router.get("/restaurants", function (req, res) {
+    let order = req.query.order;
+    let nextOrder = "dsc";
+    if (order !=='asc' && order !=='dsc') order = 'asc';
+
+    if(order === 'dsc') nextOrder = 'asc';
+
     const storedRestaurants = resData.getStoredRestaurants();
+
+    storedRestaurants.sort(function(resA, resB){
+        if(order === 'asc' && resA.name > resB.name || order === "dsc" && resA.name < resB.name)
+          return 1; // 1 to flip
+        return -1; // not flip
+    })
+
+    //sort on the name
     res.render("restaurants", {
       numberOfRestaurants: storedRestaurants.length,
       restaurants: storedRestaurants,
+      nextOrder: nextOrder,
     });
     //render has second parameter is object
   });
